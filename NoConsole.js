@@ -34,8 +34,10 @@ engine.on('game_starting', function(info) {
 		if (engine.lastGamePlay() == 'LOST') { // If last game loss:
 		lossStreak++;
 
-		if (!fixedbet) currentBet *= betIncrement; // Change bet if it is not fixed.
-
+		if (!fixedbet) {
+			currentBet *= betIncrement; // Change bet if it is not fixed.
+			currentBet = Math.ceil(currentBet);
+		}
 		if (!fixedMultiplier){ // Change Multiplier if it is not fixed
 		if (lossStreak == 1) {currentMultiplier = lossStreak1Multiplier;}
 		if (lossStreak == 2) {currentMultiplier = lossStreak2Multiplier;}
