@@ -15,7 +15,7 @@ var maximumBet = 999999; // Maximum bet the bot will do (in Ethos).
 var randommode = false; // Randomly skip games. True or false
 var randommin = 2; // Minimum random skip range limit
 var randommax = 5; // Maximum random skip range limit
-var gameplay = 2; // How many game play before stoping. Set 0 to play all game  
+var gameplay = 0; // How many game play before stoping. Set 0 to play all game
 var gamerestart = 2; // Start betting again after how many games
 var gamecount = 1; // Counter for game played
 
@@ -29,20 +29,21 @@ var randomgcount = Math.floor(Math.random() * (randommax - randommin)) + randomm
 // On a game starting, place the bet.
 engine.on('game_starting', function(info) {
 
-if ((randommode && randomgcount>0) || gamecount > gameplay){ //if random mode is on, and within skip count, will not start game
-	  randomgcount--;
-		if (gamecount == gameplay+gamerestart) gamecount = 0;
+if ((randommode && randomgcount>0) || (gamecount>gameplay && gameplay!=0)){ //if random mode is on, and within skip count, will not start game
+	randomgcount--;
+	if (gamecount == gameplay+gamerestart) gamecount = 0;
 }
 else
 {
-		if (engine.lastGamePlay() == 'LOST') { // If last game loss:
-		lossStreak++;
+	if (engine.lastGamePlay() == 'LOST') { // If last game loss:
+	lossStreak++;
 
 		if (!fixedbet) {
-			currentBet *= betIncrement; // Change bet if it is not fixed.
-			currentBet = Math.ceil(currentBet);
+		currentBet *= betIncrement; // Change bet if it is not fixed.
+		currentBet = Math.ceil(currentBet);
 		}
-		if (!fixedMultiplier){ // Change Multiplier if it is not fixed
+		
+      	if (!fixedMultiplier){ // Change Multiplier if it is not fixed
 		if (lossStreak == 1) {currentMultiplier = lossStreak1Multiplier;}
 		if (lossStreak == 2) {currentMultiplier = lossStreak2Multiplier;}
 		if (lossStreak == 3) {currentMultiplier = lossStreak3Multiplier;}
@@ -51,8 +52,8 @@ else
 		if (lossStreak == 6) {currentMultiplier = lossStreak6Multiplier;}
 		}
 
-		}
-		else { // Otherwise if win or first game:
+	}
+	else { // Otherwise if win or first game:
 		lossStreak = 0; // If it was a win, we reset the lossStreak.
 
 		// Update bet.
@@ -60,19 +61,19 @@ else
 		var balnow = engine.getBalance();
 		if (pctBet > 0) currentBet = (pctBet / 100) * balnow;
 		currentMultiplier = baseMultiplier;
-		}
+	}
 
-		if (currentBet <= engine.getBalance()) { // Ensure we have enough to bet
-		    if (currentBet > (maximumBet * 100)) { // Ensure you only bet the maximum.
-		        // Bet size exceeds maximum bet, lowering bet to maximumBet
-		          currentBet = maximumBet;
-            }
-		    engine.placeBet(Math.ceil(currentBet/100)*100, Math.round(currentMultiplier * 100), false);
+	if (currentBet <= engine.getBalance()) { // Ensure we have enough to bet
+		if (currentBet > (maximumBet * 100)) { // Ensure you only bet the maximum.
+		// Bet size exceeds maximum bet, lowering bet to maximumBet
+		currentBet = maximumBet;
+        }
+		engine.placeBet(Math.ceil(currentBet/100)*100, Math.round(currentMultiplier * 100), false);
 
     }
     else { // Otherwise insufficent funds...
         if (engine.getBalance() < 100) {
-      // Insufficent funds to do anything... stopping
+        // Insufficent funds to do anything... stopping
         engine.stop();
         }
         else {
