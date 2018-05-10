@@ -38,19 +38,19 @@ else
 	if (engine.lastGamePlay() == 'LOST') { // If last game loss:
 	lossStreak++;
 
-		if (!fixedbet) {
-		currentBet *= betIncrement; // Change bet if it is not fixed.
-		currentBet = Math.ceil(currentBet);
-		}
+	if (!fixedbet) {
+	currentBet *= betIncrement; // Change bet if it is not fixed.
+	currentBet = Math.ceil(currentBet);
+	}
 		
       	if (!fixedMultiplier){ // Change Multiplier if it is not fixed
-		if (lossStreak == 1) {currentMultiplier = lossStreak1Multiplier;}
-		if (lossStreak == 2) {currentMultiplier = lossStreak2Multiplier;}
-		if (lossStreak == 3) {currentMultiplier = lossStreak3Multiplier;}
-		if (lossStreak == 4) {currentMultiplier = lossStreak4Multiplier;}
-		if (lossStreak == 5) {currentMultiplier = lossStreak5Multiplier;}
-		if (lossStreak == 6) {currentMultiplier = lossStreak6Multiplier;}
-		}
+	if (lossStreak == 1) {currentMultiplier = lossStreak1Multiplier;}
+	if (lossStreak == 2) {currentMultiplier = lossStreak2Multiplier;}
+	if (lossStreak == 3) {currentMultiplier = lossStreak3Multiplier;}
+	if (lossStreak == 4) {currentMultiplier = lossStreak4Multiplier;}
+	if (lossStreak == 5) {currentMultiplier = lossStreak5Multiplier;}
+	if (lossStreak == 6) {currentMultiplier = lossStreak6Multiplier;}
+	}
 
 	}
 	else { // Otherwise if win or first game:
