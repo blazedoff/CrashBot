@@ -1,15 +1,16 @@
 // Settings
 var baseBet = 100; // In Ethos
+var pctBet = 0.1; // Set more than 0 to activate percentage bet, it will overwrite basebet and use that percentage. Eg. 10 will use 10% of balance
 var fixedbet = false; // Set to true to use base bet regardless of win or loss
 var betIncrement = 4; // Each loss multiply by this number
 var fixedMultiplier = false; // Set to true to use fixed multiplier(cashout) regardless of win or loss
-var baseMultiplier = 1.08; // Target multiplier
+var baseMultiplier = 1.2; // Target multiplier
 var lossStreak1Multiplier = 1.25;
-var lossStreak2Multiplier = 1.08;
-var lossStreak3Multiplier = 1.08;
+var lossStreak2Multiplier = 1.33;
+var lossStreak3Multiplier = 1.33;
 var lossStreak4Multiplier = 1.33;
 var lossStreak5Multiplier = 1.33;
-var lossStreak6Multiplier = 1.33;
+var lossStreak6Multiplier = 1.5;
 var maximumBet = 999999; // Maximum bet the bot will do (in Ethos).
 var randommode = false; // Randomly skip games. True or false
 var randommin = 2; // Minimum random skip range limit
@@ -25,12 +26,11 @@ var randomgcount = Math.floor(Math.random() * (randommax - randommin)) + randomm
 // On a game starting, place the bet.
 engine.on('game_starting', function(info) {
 
-	  if (randommode && randomgcount>0) { //if random mode is on, and within skip count, will not start game
+if (randommode && randomgcount>0) { //if random mode is on, and within skip count, will not start game
 	  randomgcount--;
-		}
-		else
-		{
-
+}
+else
+{
 		if (engine.lastGamePlay() == 'LOST') { // If last game loss:
 		lossStreak++;
 
@@ -53,6 +53,8 @@ engine.on('game_starting', function(info) {
 
 		// Update bet.
 		currentBet = baseEthos; // in Ethos
+		var balnow = engine.getBalance();
+		if (pctBet > 0) currentBet = (pctBet / 100) * balnow;
 		currentMultiplier = baseMultiplier;
 		}
 
@@ -61,7 +63,8 @@ engine.on('game_starting', function(info) {
 		        // Bet size exceeds maximum bet, lowering bet to maximumBet
 		          currentBet = maximumBet;
             }
-		    engine.placeBet(currentBet, Math.round(currentMultiplier * 100), false);
+		    engine.placeBet(Math.ceil(currentBet/100)*100, Math.round(currentMultiplier * 100), false);
+
     }
     else { // Otherwise insufficent funds...
         if (engine.getBalance() < 100) {
